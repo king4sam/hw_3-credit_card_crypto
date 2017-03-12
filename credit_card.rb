@@ -18,10 +18,10 @@ class CreditCard
   # returns json string
   def to_json
     {
-      :number => this.number,
-      :expiration_date => this.expiration_date,
-      :owner => this.owner,
-      :credit_network => this.credit_network
+      :number => self.number,
+      :expiration_date => self.expiration_date,
+      :owner => self.owner,
+      :credit_network => self.credit_network
     }.to_json
   end
 
