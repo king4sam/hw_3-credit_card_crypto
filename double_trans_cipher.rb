@@ -33,8 +33,30 @@ module DoubleTranspositionCipher
   end
 
   def self.decrypt(ciphertext, key)
+    rows = Math.sqrt(ciphertext.length).ceil
+    cols = (ciphertext.length.to_f/row).ceil
+
+    matrix = ciphertext.chars.each_slice(cols).to_a
+
+    row_shuffle_index = (0...rows).to_a.shuffle(random: Random.new(key))
+    cols_shuffle_index = (0...cols).to_a.shuffle(random: Random.new(key))
+
+    matrix.each do |row|
+      row.sort_by!.with_index do |_,shuffled_ord|
+        cols_shuffle_index.index(shuffled_ord)
+      end
+    end
+
+    matrix.sort_by!.with_index do |_,shuffled_ord|
+      row_shuffle_index.index(shuffled_ord)
+    end
+
+    decrypt_doc = matrix.inject('') do |doc, row|
+      doc << row.join
+    end
+
+    decrypt_doc.delete(' ')
     # TODO: FILL THIS IN!
-    ciphertext
   end
 
 end
