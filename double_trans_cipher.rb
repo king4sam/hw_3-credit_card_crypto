@@ -8,14 +8,12 @@ module DoubleTranspositionCipher
     # 4. sort columns of each row in predictibly random way
     # 5. return joined cyphertext
 
-    rows = Math.sqrt(document.length).ceil
-    cols = (document.length.to_f/row).ceil
+    rows, cols = find_rowcol(document)
 
     ex_document = document.length < rows * cols ?  document.ljust(rows * cols, ' ') : document
 
     matrix = ex_document.chars.each_slice(cols).to_a
-    row_shuffle_index = (0...rows).to_a.shuffle(random: Random.new(key))
-    cols_shuffle_index = (0...cols).to_a.shuffle(random: Random.new(key))
+    row_shuffle_index, cols_shuffle_index = rowcol_shuffle_index(rows,cols,key)
 
     matrix.sort_by!.with_index do |_,index|
       row_shuffle_index[index]
@@ -33,13 +31,12 @@ module DoubleTranspositionCipher
   end
 
   def self.decrypt(ciphertext, key)
-    rows = Math.sqrt(ciphertext.length).ceil
-    cols = (ciphertext.length.to_f/row).ceil
+
+    rows, cols = find_rowcol(ciphertext)
 
     matrix = ciphertext.chars.each_slice(cols).to_a
 
-    row_shuffle_index = (0...rows).to_a.shuffle(random: Random.new(key))
-    cols_shuffle_index = (0...cols).to_a.shuffle(random: Random.new(key))
+    row_shuffle_index, cols_shuffle_index = rowcol_shuffle_index(rows,cols,key)
 
     matrix.each do |row|
       row.sort_by!.with_index do |_,shuffled_ord|
@@ -59,4 +56,17 @@ module DoubleTranspositionCipher
     # TODO: FILL THIS IN!
   end
 
+  def self.find_rowcol(document)
+    rows = Math.sqrt(document.length).ceil
+    cols = (document.length.to_f/rows).ceil
+
+    [rows, cols]
+  end
+
+  def self.rowcol_shuffle_index(rows,cols,key)
+    [
+      (0...rows).to_a.shuffle(random: Random.new(key)),
+      (0...cols).to_a.shuffle(random: Random.new(key))
+    ]
+  end
 end
