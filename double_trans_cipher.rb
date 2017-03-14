@@ -8,23 +8,26 @@ module DoubleTranspositionCipher
     # 4. sort columns of each row in predictibly random way
     # 5. return joined cyphertext
 
-    rows, cols = find_rowcol(document)
+    rows, cols = cal_rowcol(document)
 
     ex_document = document.length < rows * cols ?  document.ljust(rows * cols, ' ') : document
 
     matrix = ex_document.chars.each_slice(cols).to_a
     row_shuffle_index, cols_shuffle_index = rowcol_shuffle_index(rows,cols,key)
 
+    #shuffle rows
     matrix.sort_by!.with_index do |_,index|
       row_shuffle_index[index]
     end
 
+    #shuffle cols
     matrix.each do |row|
       row.sort_by!.with_index do |_,index|
         cols_shuffle_index[index]
       end
     end
 
+    # rebuild String
     matrix.inject('') do |encrypt_doc, row|
       encrypt_doc << row.join
     end
@@ -32,31 +35,35 @@ module DoubleTranspositionCipher
 
   def self.decrypt(ciphertext, key)
 
-    rows, cols = find_rowcol(ciphertext)
+    rows, cols = cal_rowcol(ciphertext)
 
     matrix = ciphertext.chars.each_slice(cols).to_a
 
     row_shuffle_index, cols_shuffle_index = rowcol_shuffle_index(rows,cols,key)
 
+    #cols recover
     matrix.each do |row|
       row.sort_by!.with_index do |_,shuffled_ord|
         cols_shuffle_index.index(shuffled_ord)
       end
     end
 
+    #rows recover
     matrix.sort_by!.with_index do |_,shuffled_ord|
       row_shuffle_index.index(shuffled_ord)
     end
 
+    # rebuild String
     decrypt_doc = matrix.inject('') do |doc, row|
       doc << row.join
     end
 
+    # remove additional whitespace char
     decrypt_doc.delete(' ')
     # TODO: FILL THIS IN!
   end
 
-  def self.find_rowcol(document)
+  def self.cal_rowcol(document)
     rows = Math.sqrt(document.length).ceil
     cols = (document.length.to_f/rows).ceil
 
