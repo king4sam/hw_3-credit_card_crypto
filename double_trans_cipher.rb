@@ -7,23 +7,22 @@ module DoubleTranspositionCipher
     # 3. sort rows in predictibly random way using key as seed
     # 4. sort columns of each row in predictibly random way
     # 5. return joined cyphertext
-
     rows, cols = cal_rowcol(document)
 
-    ex_document = document.length < rows * cols ?  document.ljust(rows * cols, ' ') : document
+    ex_document = document.length < rows * cols ? document.ljust(rows * cols, ' ') : document
 
     matrix = ex_document.chars.each_slice(cols).to_a
-    row_shuffle_index, cols_shuffle_index = rowcol_shuffle_index(rows,cols,key)
+    rows_index, cols_index = rowcol_shuffle_index(rows, cols, key)
 
-    #shuffle rows
-    matrix.sort_by!.with_index do |_,index|
-      row_shuffle_index[index]
+    # shuffle rows
+    matrix.sort_by!.with_index do |_, index|
+      rows_index[index]
     end
 
-    #shuffle cols
+    # shuffle cols
     matrix.each do |row|
-      row.sort_by!.with_index do |_,index|
-        cols_shuffle_index[index]
+      row.sort_by!.with_index do |_, index|
+        cols_index[index]
       end
     end
 
@@ -34,23 +33,22 @@ module DoubleTranspositionCipher
   end
 
   def self.decrypt(ciphertext, key)
-
     rows, cols = cal_rowcol(ciphertext)
 
     matrix = ciphertext.chars.each_slice(cols).to_a
 
-    row_shuffle_index, cols_shuffle_index = rowcol_shuffle_index(rows,cols,key)
+    rows_index, cols_index = rowcol_shuffle_index(rows, cols, key)
 
-    #cols recover
+    # cols recover
     matrix.each do |row|
-      row.sort_by!.with_index do |_,shuffled_ord|
-        cols_shuffle_index.index(shuffled_ord)
+      row.sort_by!.with_index do |_, shuffled_ord|
+        cols_index.index(shuffled_ord)
       end
     end
 
-    #rows recover
-    matrix.sort_by!.with_index do |_,shuffled_ord|
-      row_shuffle_index.index(shuffled_ord)
+    # rows recover
+    matrix.sort_by!.with_index do |_, shuffled_ord|
+      rows_index.index(shuffled_ord)
     end
 
     # rebuild String
@@ -65,12 +63,12 @@ module DoubleTranspositionCipher
 
   def self.cal_rowcol(document)
     rows = Math.sqrt(document.length).ceil
-    cols = (document.length.to_f/rows).ceil
+    cols = (document.length.to_f / rows).ceil
 
     [rows, cols]
   end
 
-  def self.rowcol_shuffle_index(rows,cols,key)
+  def self.rowcol_shuffle_index(rows, cols, key)
     [
       (0...rows).to_a.shuffle(random: Random.new(key)),
       (0...cols).to_a.shuffle(random: Random.new(key))
