@@ -1,7 +1,7 @@
 require_relative './luhn_validator.rb'
 require 'rbnacl/libsodium'
 require 'json'
-
+# CreditCard
 class CreditCard
   # TODO: mixin the LuhnValidator using an 'include' statement
   include LuhnValidator
@@ -19,10 +19,10 @@ class CreditCard
   # returns json string
   def to_json
     {
-      :number => self.number,
-      :expiration_date => self.expiration_date,
-      :owner => self.owner,
-      :credit_network => self.credit_network
+      number: number,
+      expiration_date: expiration_date,
+      owner: owner,
+      credit_network: credit_network
     }.to_json
   end
 

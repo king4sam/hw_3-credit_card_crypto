@@ -1,4 +1,6 @@
+# SubstitutionCipher
 module SubstitutionCipher
+  # Caesar cipher
   module Caesar
     # Encrypts document using key
     # Arguments:
@@ -28,7 +30,7 @@ module SubstitutionCipher
       # TODO: decrypt string using caesar cipher
     end
   end
-
+  # Permutation cipher
   module Permutation
     # Encrypts document using key
     # Arguments:
@@ -37,7 +39,7 @@ module SubstitutionCipher
     # Returns: String
     def self.encrypt(document, key)
       encrypted_str = ''
-      random_permutation= Array(0..127).shuffle(random: Random.new(1))
+      random_permutation = Array(0..127).shuffle(random: Random.new(key))
       document.to_s.each_char do |char|
         encrypted_str << random_permutation[char.ord].chr
       end
@@ -52,7 +54,7 @@ module SubstitutionCipher
     # Returns: String
     def self.decrypt(document, key)
       decrypted_str = ''
-      random_permutation= Array(0..127).shuffle(random: Random.new(1))
+      random_permutation = Array(0..127).shuffle(random: Random.new(key))
       document.each_char do |char|
         decrypted_str << random_permutation.find_index(char.ord).chr
       end

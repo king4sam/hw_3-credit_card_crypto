@@ -15,7 +15,7 @@ describe 'Test hashing requirements' do
   describe 'Test regular hashing' do
     describe 'Check hashes are consistently produced' do
       it 'should be the same and not nil' do
-        db = cards.map {|c| [c,c.clone] }
+        db = cards.map { |c| [c, c.clone] }
         db.each do |cp|
           cp.first.hash.wont_be_nil
           cp.last.hash.wont_be_nil
@@ -40,7 +40,7 @@ describe 'Test hashing requirements' do
   describe 'Test cryptographic hashing' do
     describe 'Check hashes are consistently produced' do
       it 'should be the same and not nil' do
-        db = cards.map {|c| [c,c.clone] }
+        db = cards.map { |c| [c, c.clone] }
         db.each do |cp|
           cp.first.hash_secure.wont_be_nil
           cp.last.hash_secure.wont_be_nil

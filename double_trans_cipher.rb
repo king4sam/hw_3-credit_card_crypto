@@ -1,3 +1,4 @@
+# DoubleTranspositionCipher
 module DoubleTranspositionCipher
   def self.encrypt(document, key)
     # TODO: FILL THIS IN!
@@ -8,28 +9,22 @@ module DoubleTranspositionCipher
     # 4. sort columns of each row in predictibly random way
     # 5. return joined cyphertext
     rows, cols = cal_rowcol(document)
-
-    ex_document = document.length < rows * cols ? document.ljust(rows * cols, "\n") : document
+    nsquare = document.length < rows * cols
+    ex_document = nsquare ? document.ljust(rows * cols, "\n") : document
 
     matrix = ex_document.chars.each_slice(cols).to_a
     rows_index, cols_index = rowcol_shuffle_index(rows, cols, key)
 
     # shuffle rows
-    matrix.sort_by!.with_index do |_, index|
-      rows_index[index]
-    end
+    matrix.sort_by!.with_index { |_, index| rows_index[index] }
 
     # shuffle cols
     matrix.each do |row|
-      row.sort_by!.with_index do |_, index|
-        cols_index[index]
-      end
+      row.sort_by!.with_index { |_, index| cols_index[index] }
     end
 
     # rebuild String
-    matrix.inject('') do |encrypt_doc, row|
-      encrypt_doc << row.join
-    end
+    matrix.inject('') { |encrypt_doc, row| encrypt_doc << row.join }
   end
 
   def self.decrypt(ciphertext, key)
@@ -37,27 +32,19 @@ module DoubleTranspositionCipher
 
     matrix = ciphertext.chars.each_slice(cols).to_a
 
-    rows_index, cols_index = rowcol_shuffle_index(rows, cols, key)
+    r_idx, c_idx = rowcol_shuffle_index(rows, cols, key)
 
     # cols recover
     matrix.each do |row|
-      row.sort_by!.with_index do |_, shuffled_ord|
-        cols_index.index(shuffled_ord)
-      end
+      row.sort_by!.with_index { |_, shuffled_ord| c_idx.index(shuffled_ord) }
     end
 
     # rows recover
-    matrix.sort_by!.with_index do |_, shuffled_ord|
-      rows_index.index(shuffled_ord)
-    end
+    matrix.sort_by!.with_index { |_, shuffled_ord| r_idx.index(shuffled_ord) }
 
     # rebuild String
-    decrypt_doc = matrix.inject('') do |doc, row|
-      doc << row.join
-    end
-
+    matrix.inject('') { |doc, row| doc << row.join }.delete("\n")
     # remove additional whitespace char
-    decrypt_doc.delete("\n")
     # TODO: FILL THIS IN!
   end
 
