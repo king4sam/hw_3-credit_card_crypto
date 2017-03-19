@@ -9,7 +9,7 @@ module DoubleTranspositionCipher
     # 5. return joined cyphertext
     rows, cols = cal_rowcol(document)
 
-    ex_document = document.length < rows * cols ? document.ljust(rows * cols, ' ') : document
+    ex_document = document.length < rows * cols ? document.ljust(rows * cols, "\n") : document
 
     matrix = ex_document.chars.each_slice(cols).to_a
     rows_index, cols_index = rowcol_shuffle_index(rows, cols, key)
@@ -57,7 +57,7 @@ module DoubleTranspositionCipher
     end
 
     # remove additional whitespace char
-    decrypt_doc.delete(' ')
+    decrypt_doc.delete("\n")
     # TODO: FILL THIS IN!
   end
 
