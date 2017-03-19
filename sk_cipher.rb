@@ -1,6 +1,8 @@
+# frozen_string_literal: true
 require 'rbnacl/libsodium'
 require 'base64'
 
+#  ModernSymmetricCipher
 module ModernSymmetricCipher
   def self.generate_new_key
     key = RbNaCl::Random.random_bytes(RbNaCl::SecretBox.key_bytes)
