@@ -37,6 +37,7 @@ class CreditCard
 
   # return a hash of the serialized credit card object
   def hash
+    to_json.hash
     # TODO: implement this method
     #   - Produce a hash (using default hash method) of the credit card's
     #     serialized contents.
