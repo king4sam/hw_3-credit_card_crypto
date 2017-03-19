@@ -11,12 +11,28 @@ card_details = [
 cards = card_details.map { |c| CreditCard.new(c[:num], c[:exp], c[:name], c[:net]) }
 
 describe 'Test hashing requirements' do
+
   describe 'Test regular hashing' do
     describe 'Check hashes are consistently produced' do
+      it 'should be the same and not nil' do
+        db = cards.map {|c| [c,c.clone] }
+        db.each do |cp|
+          cp.first.hash.wont_be_nil
+          cp.last.hash.wont_be_nil
+          cp.first.hash.must_equal cp.last.hash
+        end
+      end
       # TODO: Check that each card produces the same hash if hashed repeatedly
     end
 
     describe 'Check for unique hashes' do
+      it 'should be different for different cards' do
+        cards.combination(2).to_a.each do |cmp|
+          cmp.first.hash.wont_be_nil
+          cmp.last.hash.wont_be_nil
+          cmp.first.hash.wont_equal cmp.last.hash
+        end
+      end
       # TODO: Check that each card produces a different hash than other cards
     end
   end
